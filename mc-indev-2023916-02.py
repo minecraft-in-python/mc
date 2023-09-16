@@ -105,8 +105,24 @@ for z in range(32):
         for y in range(2):
             voxel = Voxel(position = (x, y, z))
         a=random.randint(1,150)
-        if a<15:
-            voxel = Voxel(position = (x, 2, z))
+        if a<10:
+            b=random.randint(1,3)
+            if b==1:
+                voxel = Voxel(position = (x, 2, z))
+                voxel = Voxel(position = (x+1, 2, z))
+                voxel = Voxel(position = (x, 2, z+1))
+            if b==2:
+                voxel = Voxel(position = (x, 2, z))
+                voxel = Voxel(position = (x+1, 2, z))
+                voxel = Voxel(position = (x, 2, z+1))
+                voxel = Voxel(position = (x-1, 2, z))
+            if b==3:
+                voxel = Voxel(position = (x, 2, z))
+                voxel = Voxel(position = (x+1, 2, z))
+                voxel = Voxel(position = (x, 2, z+1))
+                voxel = Voxel(position = (x, 2, z-1))
+                voxel = Voxel(position = (x-1, 2, z))
+                voxel = Voxel(position = (x-1, 2, z+1))
             
 
 player = FirstPersonController()
