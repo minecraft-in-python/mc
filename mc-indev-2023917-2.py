@@ -6,6 +6,7 @@ from random import randint
 from turtle import position, pu
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
+import easygui
 
 app = Ursina()
 
@@ -76,7 +77,8 @@ class Voxel(Button):
                 if block_pick == 6: voxel = Voxel(position = self.position + mouse.normal, texture = water_texture)
                 if block_pick == 7: voxel = Voxel(position = self.position + mouse.normal, texture = leaves_texture)
                 if block_pick == 8: voxel = Voxel(position = self.position + mouse.normal, texture = grass_texture)
-
+                #if block_pick == 8: voxel = Entity(position = self.position + mouse.normal, texture = grass_texture, model="cube", scale=(1,1,1))
+                
             
             if key == "left mouse down":
                 stone.play()
@@ -101,7 +103,7 @@ class Hand(Entity):
             model = "Arm",
             texture = arm_texture,
             scale = 0.2,
-            rotation = Vec3(150, -10, 0),
+            rotation = Vec3(170, -10, 0),
             position = Vec2(0.4, -0.6)
         )
     
@@ -110,9 +112,6 @@ class Hand(Entity):
 
     def passive(self):
         self.position = Vec2(0.4, -0.6)
-
-
-
 
 
 def l_shape(block, x, y, z):
@@ -136,12 +135,11 @@ def pwac_shape(block, x, y, z):
     voxel = Voxel(position = (x-1, 2, z))
     voxel = Voxel(position = (x-1, 2, z+1))
 
+width = easygui.enterbox("Width: ")
+depth = easygui.enterbox("Depth: ")
 
-
-
-# Increase the numbers for more cubes. For exapmle: for z in range(20)
-for z in range(32):
-    for x in range(32):
+for z in range(int(width)):
+    for x in range(int(depth)):
         for y in range(2):
             voxel = Voxel(position = (x, y, z))
         a=rndint(1,150)
@@ -222,7 +220,7 @@ for z in range(32):
                 voxel = Voxel(position = (x, 7, z+1), texture = leaves_texture)
                 voxel = Voxel(position = (x-1, 7, z), texture = leaves_texture)
                 voxel = Voxel(position = (x+1, 7, z), texture = leaves_texture)
-
+                
 player = FirstPersonController()
 sky = Sky()
 hand = Hand()
