@@ -3,3 +3,5 @@
 # This project is free to everybody! You can use/copy it.
 
 Hello! In this project, i tried to make minecraft with only python. It didnt turn out well for now, but im sure it will be better in the future.
+
+# YOU NEED TO DOWNLOAD ADDITIONAL FILES THAT ARE NOT HERE! IT WONT RUN WITHOUT THEM!
