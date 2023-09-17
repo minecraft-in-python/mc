@@ -10,13 +10,14 @@ from ursina.prefabs.first_person_controller import FirstPersonController
 app = Ursina()
 
 # Variables
-grass_texture = load_texture("Grass_Block.png")
+grass_block_texture = load_texture("Grass_Block.png")
 stone_texture = load_texture("Stone_Block.png")
 brick_texture = load_texture("Brick_Block.png")
 dirt_texture = load_texture("Dirt_Block.png")
 wood_texture = load_texture("Wood_Block.png")
 water_texture = load_texture("Water_Liquid.png")
 leaves_texture = load_texture("Leaves_Block.png")
+grass_texture = load_texture("Grass.png")
 sky_texture = load_texture("Skybox.png")
 arm_texture = load_texture("Arm_Texture.png")
 stone = Audio("Stone.wav", loop = False, autoplay = False)
@@ -42,11 +43,12 @@ def update():
     if held_keys["5"]: block_pick = 5
     if held_keys["6"]: block_pick = 6
     if held_keys["7"]: block_pick = 7
+    if held_keys["8"]: block_pick = 8
     
 
 # Voxel (block) properties
 class Voxel(Button):
-    def __init__(self, position = (0, 0, 0), texture = grass_texture):
+    def __init__(self, position = (0, 0, 0), texture = grass_block_texture):
         super().__init__(
             parent = scene,
             position = position,
@@ -66,20 +68,18 @@ class Voxel(Button):
                 elif block_pick==6: water.play()
                 else: stone.play()
                 
-                if block_pick == 1: voxel = Voxel(position = self.position + mouse.normal, texture = grass_texture)
+                if block_pick == 1: voxel = Voxel(position = self.position + mouse.normal, texture = grass_block_texture)
                 if block_pick == 2: voxel = Voxel(position = self.position + mouse.normal, texture = stone_texture)
                 if block_pick == 3: voxel = Voxel(position = self.position + mouse.normal, texture = brick_texture)
                 if block_pick == 4: voxel = Voxel(position = self.position + mouse.normal, texture = dirt_texture)
                 if block_pick == 5: voxel = Voxel(position = self.position + mouse.normal, texture = wood_texture)
                 if block_pick == 6: voxel = Voxel(position = self.position + mouse.normal, texture = water_texture)
                 if block_pick == 7: voxel = Voxel(position = self.position + mouse.normal, texture = leaves_texture)
+                if block_pick == 8: voxel = Voxel(position = self.position + mouse.normal, texture = grass_texture)
 
             
             if key == "left mouse down":
-                if block_pick==1 or block_pick==4: dirt.play()
-                elif block_pick==6: water.play()
-                else: stone.play()
-                
+                stone.play()
                 destroy(self)
 
 # Skybox
@@ -111,6 +111,34 @@ class Hand(Entity):
     def passive(self):
         self.position = Vec2(0.4, -0.6)
 
+
+
+
+
+def l_shape(block, x, y, z):
+    voxel = Voxel(position = (x, 2, z), texture = block)
+    voxel = Voxel(position = (x+1, 2, z), texture = block)
+    voxel = Voxel(position = (x, 2, z+1), texture = block)
+
+
+def pwal_shape(block, x, y, z):
+    voxel = Voxel(position = (x, 2, z))
+    voxel = Voxel(position = (x+1, 2, z))
+    voxel = Voxel(position = (x, 2, z+1))
+    voxel = Voxel(position = (x-1, 2, z))
+
+
+def pwac_shape(block, x, y, z):
+    voxel = Voxel(position = (x, 2, z))
+    voxel = Voxel(position = (x+1, 2, z))
+    voxel = Voxel(position = (x, 2, z+1))
+    voxel = Voxel(position = (x, 2, z-1))
+    voxel = Voxel(position = (x-1, 2, z))
+    voxel = Voxel(position = (x-1, 2, z+1))
+
+
+
+
 # Increase the numbers for more cubes. For exapmle: for z in range(20)
 for z in range(32):
     for x in range(32):
@@ -120,21 +148,11 @@ for z in range(32):
         if a<10:
             b=rndint(1,100)
             if b<40:
-                voxel = Voxel(position = (x, 2, z))
-                voxel = Voxel(position = (x+1, 2, z))
-                voxel = Voxel(position = (x, 2, z+1))
+                l_shape(grass_block_texture, x, y, z)
             if b>39 and b<70:
-                voxel = Voxel(position = (x, 2, z))
-                voxel = Voxel(position = (x+1, 2, z))
-                voxel = Voxel(position = (x, 2, z+1))
-                voxel = Voxel(position = (x-1, 2, z))
+                pwal_shape(grass_block_texture, x, y, z)
             if b>69:
-                voxel = Voxel(position = (x, 2, z))
-                voxel = Voxel(position = (x+1, 2, z))
-                voxel = Voxel(position = (x, 2, z+1))
-                voxel = Voxel(position = (x, 2, z-1))
-                voxel = Voxel(position = (x-1, 2, z))
-                voxel = Voxel(position = (x-1, 2, z+1))
+                pwac_shape(grass_block_texture, x, y, z)
         else:
             c=rndint(1,100)
             if c<2:
@@ -175,12 +193,35 @@ for z in range(32):
                 voxel = Voxel(position = (x-1, 5, z-1), texture = leaves_texture)
                 voxel = Voxel(position = (x, 5, z+1), texture = leaves_texture)
                 voxel = Voxel(position = (x, 5, z-1), texture = leaves_texture)
+
+                voxel = Voxel(position = (x+1, 5, z-2), texture = leaves_texture)
+                voxel = Voxel(position = (x, 5, z-2), texture = leaves_texture)
+                voxel = Voxel(position = (x-1, 5, z-2), texture = leaves_texture)
+                voxel = Voxel(position = (x+1, 5, z+2), texture = leaves_texture)
+                voxel = Voxel(position = (x, 5, z+2), texture = leaves_texture)
+                voxel = Voxel(position = (x-1, 5, z+2), texture = leaves_texture)
+                voxel = Voxel(position = (x+2, 5, z-1), texture = leaves_texture)
+                voxel = Voxel(position = (x+2, 5, z), texture = leaves_texture)
+                voxel = Voxel(position = (x+2, 5, z+1), texture = leaves_texture)
+                voxel = Voxel(position = (x-2, 5, z-1), texture = leaves_texture)
+                voxel = Voxel(position = (x-2, 5, z), texture = leaves_texture)
+                voxel = Voxel(position = (x-2, 5, z+1), texture = leaves_texture)
                 #Layer 5
-                voxel = Voxel(position = (x, 6, z), texture = leaves_texture)
-                voxel = Voxel(position = (x, 4, z-1), texture = leaves_texture)
-                voxel = Voxel(position = (x, 4, z+1), texture = leaves_texture)
-                voxel = Voxel(position = (x-1, 4, z), texture = leaves_texture)
-                voxel = Voxel(position = (x+1, 4, z), texture = leaves_texture)
+                voxel = Voxel(position = (x, 6, z), texture = wood_texture)
+                voxel = Voxel(position = (x+1, 6, z+1), texture = leaves_texture)
+                voxel = Voxel(position = (x-1, 6, z+1), texture = leaves_texture)
+                voxel = Voxel(position = (x+1, 6, z), texture = leaves_texture)
+                voxel = Voxel(position = (x-1, 6, z), texture = leaves_texture)
+                voxel = Voxel(position = (x+1, 6, z-1), texture = leaves_texture)
+                voxel = Voxel(position = (x-1, 6, z-1), texture = leaves_texture)
+                voxel = Voxel(position = (x, 6, z+1), texture = leaves_texture)
+                voxel = Voxel(position = (x, 6, z-1), texture = leaves_texture)
+                #Layer 6
+                voxel = Voxel(position = (x, 7, z), texture = leaves_texture)
+                voxel = Voxel(position = (x, 7, z-1), texture = leaves_texture)
+                voxel = Voxel(position = (x, 7, z+1), texture = leaves_texture)
+                voxel = Voxel(position = (x-1, 7, z), texture = leaves_texture)
+                voxel = Voxel(position = (x+1, 7, z), texture = leaves_texture)
 
 player = FirstPersonController()
 sky = Sky()
