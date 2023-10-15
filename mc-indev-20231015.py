@@ -19,11 +19,15 @@ wood_texture = load_texture("Wood_Block.png")
 water_texture = load_texture("Water_Liquid.png")
 leaves_texture = load_texture("Leaves_Block.png")
 grass_texture = load_texture("Grass.png")
+bedrock_texture = load_texture("Bedrock_Block.png")
 sky_texture = load_texture("Skybox.png")
 arm_texture = load_texture("Arm_Texture.png")
+hotbar_texture = load_texture("Hotbar.png")
 stone = Audio("Stone.wav", loop = False, autoplay = False)
 dirt = Audio("Dirt.wav", loop = False, autoplay = False)
 water = Audio("Water.mp3", loop = False, autoplay = False)
+
+
 window.exit_button.visible = False
 block_pick = 1
 rndint=random.randint
@@ -45,6 +49,8 @@ def update():
     if held_keys["6"]: block_pick = 6
     if held_keys["7"]: block_pick = 7
     if held_keys["8"]: block_pick = 8
+    if held_keys["9"]: block_pick = 9
+    
     
 
 # Voxel (block) properties
@@ -77,12 +83,16 @@ class Voxel(Button):
                 if block_pick == 6: voxel = Voxel(position = self.position + mouse.normal, texture = water_texture)
                 if block_pick == 7: voxel = Voxel(position = self.position + mouse.normal, texture = leaves_texture)
                 if block_pick == 8: voxel = Voxel(position = self.position + mouse.normal, texture = grass_texture)
-                #if block_pick == 8: voxel = Entity(position = self.position + mouse.normal, texture = grass_texture, model="cube", scale=(1,1,1))
+                if block_pick == 9: voxel = Voxel(position = self.position + mouse.normal, texture = bedrock_texture)
+                
                 
             
             if key == "left mouse down":
                 stone.play()
                 destroy(self)
+
+            if key == "e":
+                exit()
 
 # Skybox
 class Sky(Entity):
@@ -104,14 +114,26 @@ class Hand(Entity):
             texture = arm_texture,
             scale = 0.2,
             rotation = Vec3(170, -10, 0),
-            position = Vec2(0.4, -0.6)
+            position = Vec2(0.6, -0.6)
         )
     
     def active(self):
-        self.position = Vec2(0.3, -0.5)
+        self.position = Vec2(0.5, -0.5)
 
     def passive(self):
-        self.position = Vec2(0.4, -0.6)
+        self.position = Vec2(0.6, -0.6)
+
+
+class Hotbar(Entity):
+    def __init__(self):
+        super().__init__(
+            parent=camera.ui,
+            model='quad',
+            position=Vec2(0, -0.43),
+            scale=(0.14, 0.14, 0.25),
+            texture = hotbar_texture)
+Hotbar()
+
 
 
 def l_shape(block, x, y, z):
@@ -135,12 +157,12 @@ def pwac_shape(block, x, y, z):
     voxel = Voxel(position = (x-1, 2, z))
     voxel = Voxel(position = (x-1, 2, z+1))
 
-width = easygui.enterbox("Width: ")
-depth = easygui.enterbox("Depth: ")
+warning = easygui.msgbox(msg="If having performance issues, read readme.md", title="Tip", ok_button="Okay")
+width = easygui.enterbox(msg="Width: ", title="Width")
+depth = easygui.enterbox(msg="Depth: ", title="Depth")
+gentype = easygui.choicebox(msg="Generation type:", title="Generation type", choices=["Normal", "Flat"])
 
-gentype = easygui.enterbox("Generation type(flat, normal): ")
-
-if gentype=="normal":
+if gentype=="Normal":
     for z in range(int(width)):
         for x in range(int(depth)):
             for y in range(2):
@@ -224,7 +246,7 @@ if gentype=="normal":
                     voxel = Voxel(position = (x-1, 7, z), texture = leaves_texture)
                     voxel = Voxel(position = (x+1, 7, z), texture = leaves_texture)
 
-elif gentype=="flat":
+elif gentype=="Flat":
     for z in range(int(width)):
         for x in range(int(depth)):
             voxel = Voxel(position = (x, 0, z))
