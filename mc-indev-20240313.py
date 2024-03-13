@@ -11,21 +11,34 @@ import easygui
 app = Ursina()
 
 # Variables
-grass_block_texture = load_texture("Grass_Block.png")
-stone_texture = load_texture("Stone_Block.png")
-brick_texture = load_texture("Brick_Block.png")
-dirt_texture = load_texture("Dirt_Block.png")
-wood_texture = load_texture("Wood_Block.png")
-water_texture = load_texture("Water_Liquid.png")
-leaves_texture = load_texture("Leaves_Block.png")
-grass_texture = load_texture("Grass.png")
-bedrock_texture = load_texture("Bedrock_Block.png")
-sky_texture = load_texture("Skybox.png")
-arm_texture = load_texture("Arm_Texture.png")
-hotbar_texture = load_texture("Hotbar.png")
-stone = Audio("Stone.wav", loop = False, autoplay = False)
-dirt = Audio("Dirt.wav", loop = False, autoplay = False)
-water = Audio("Water.mp3", loop = False, autoplay = False)
+grass_block_texture = load_texture("./files/Grass_Block.png")
+stone_texture = load_texture("./files/Stone_Block.png")
+brick_texture = load_texture("./files/Brick_Block.png")
+dirt_texture = load_texture("./files/Dirt_Block.png")
+wood_texture = load_texture("./files/Wood_Block.png")
+water_texture = load_texture("./files/Water_Liquid.png")
+leaves_texture = load_texture("./files/Leaves_Block.png")
+grass_texture = load_texture("./files/Grass.png")
+bedrock_texture = load_texture("./files/Bedrock_Block.png")
+sky_texture = load_texture("./files/Skybox.png")
+arm_texture = load_texture("./files/Arm_Texture.png")
+
+
+hotbar_texture = load_texture("./files/Grass_Block_Hotbar.png")
+#grass_block_hotbar = load_texture("Grass_Block_Hotbar.png")
+#stone_hotbar = load_texture("Stone_Hotbar.png")
+#brick_hotbar = load_texture("Brick_Hotbar.png")
+#dirt_hotbar = load_texture("Dirt_Hotbar.png")
+#wood_hotbar = load_texture("Wood_Hotbar.png")
+#water_hotbar = load_texture("Water_Hotbar.png")
+#leaves_hotbar = load_texture("Leaves_Hotbar.png")
+#grass_hotbar = load_texture("Grass_Hotbar.png")
+#bedrock_hotbar = load_texture("Bedrock_Hotbar.png")
+
+
+stone = Audio("./files/Stone.wav", loop = False, autoplay = False)
+dirt = Audio("./files/Dirt.wav", loop = False, autoplay = False)
+water = Audio("./files/Water.mp3", loop = False, autoplay = False)
 
 
 window.exit_button.visible = False
@@ -74,7 +87,8 @@ class Voxel(Button):
                 if block_pick==1 or block_pick==4: dirt.play()
                 elif block_pick==6: water.play()
                 else: stone.play()
-                
+
+                #Placement
                 if block_pick == 1: voxel = Voxel(position = self.position + mouse.normal, texture = grass_block_texture)
                 if block_pick == 2: voxel = Voxel(position = self.position + mouse.normal, texture = stone_texture)
                 if block_pick == 3: voxel = Voxel(position = self.position + mouse.normal, texture = brick_texture)
@@ -84,15 +98,24 @@ class Voxel(Button):
                 if block_pick == 7: voxel = Voxel(position = self.position + mouse.normal, texture = leaves_texture)
                 if block_pick == 8: voxel = Voxel(position = self.position + mouse.normal, texture = grass_texture)
                 if block_pick == 9: voxel = Voxel(position = self.position + mouse.normal, texture = bedrock_texture)
+
+                #Hotbar
+                #if block_pick == 1: hotbar_texture = load_texture("Grass_Block_Hotbar.png")
+                #if block_pick == 2: hotbar_texture = load_texture("Stone_Hotbar.png")
+                #if block_pick == 3: hotbar_texture = load_texture("Brick_Hotbar.png")
+                #if block_pick == 4: hotbar_texture = load_texture("Dirt_Hotbar.png")
+                #if block_pick == 5: hotbar_texture = load_texture("Wood_Hotbar.png")
+                #if block_pick == 6: hotbar_texture = load_texture("Water_Hotbar.png")
+                #if block_pick == 7: hotbar_texture = load_texture("Leaves_Hotbar.png")
+                #if block_pick == 8: hotbar_texture = load_texture("Grass_Hotbar.png")
+                #if block_pick == 9: hotbar_texture = load_texture("Bedrock_Hotbar.png")
+                #destroy(Hotbar())
+                #Hotbar()
                 
                 
-            
             if key == "left mouse down":
                 stone.play()
                 destroy(self)
-
-            if key == "e":
-                exit()
 
 # Skybox
 class Sky(Entity):
@@ -124,16 +147,14 @@ class Hand(Entity):
         self.position = Vec2(0.6, -0.6)
 
 
-class Hotbar(Entity):
-    def __init__(self):
-        super().__init__(
-            parent=camera.ui,
-            model='quad',
-            position=Vec2(0, -0.43),
-            scale=(0.14, 0.14, 0.25),
-            texture = hotbar_texture)
-Hotbar()
-
+#class Hotbar(Entity):
+ #   def __init__(self):
+  #      super().__init__(
+   #         parent=camera.ui,
+    #        model='quad',
+     #       position=Vec2(0, -0.43),
+      #      scale=(0.14, 0.14, 0.25),
+       #     texture = hotbar_texture)
 
 
 def l_shape(block, x, y, z):
@@ -165,6 +186,7 @@ gentype = easygui.choicebox(msg="Generation type:", title="Generation type", cho
 if gentype=="Normal":
     for z in range(int(width)):
         for x in range(int(depth)):
+            #voxel = Voxel(position = (x, 0, z), texture = bedrock_texture)
             for y in range(2):
                 voxel = Voxel(position = (x, y, z))
             a=rndint(1,150)
@@ -249,8 +271,9 @@ if gentype=="Normal":
 elif gentype=="Flat":
     for z in range(int(width)):
         for x in range(int(depth)):
-            voxel = Voxel(position = (x, 0, z))
+            voxel = Voxel(position = (x, 0, z), texture = bedrock_texture)
             voxel = Voxel(position = (x, 1, z))
+            voxel = Voxel(position = (x, 2, z))
 
 
 player = FirstPersonController()
