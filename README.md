@@ -6,4 +6,5 @@ Hello! In this project, i tried to make minecraft with only python. It didnt tur
 
 If having performance issues:
   Try lowering width and depth;
-  Try using "Flat" instead of "Normal" world generation.
+  Try using "Flat" instead of "Normal" world generation;
+  Turn on performance mode.
