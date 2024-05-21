@@ -47,9 +47,6 @@ player.speed = 5
 
 # Updates every frame
 def update():
-
-    
-    
     if player.y < -10:
         player.y = 40
         player.x = 0
@@ -72,13 +69,6 @@ def update():
     if held_keys["8"]: block_pick = 8
     if held_keys["9"]: block_pick = 9
 
-    if held_keys["left shift"]:
-        if player.speed == 5:
-            player.speed = 8
-            camera.animate("fov", camera.fov+30, delay=0)
-        else:
-            player.speed = 5
-            camera.animate("fov", camera.fov-30, delay=0)
 
 # Voxel (block) properties
 class Voxel(Button):
@@ -99,6 +89,13 @@ class Voxel(Button):
         if self.hovered:
             xyz1 = str(self.position).split("(")
             xyz = (xyz1[1].replace(")","")).split(",")
+            if key == "left shift":
+                if player.speed == 5:
+                    player.speed = 8
+                    camera.animate("fov", camera.fov+30, delay=0)
+                else:
+                    player.speed = 5
+                    camera.animate("fov", camera.fov-30, delay=0)
             if key == "right mouse down":
                 blocks.append(str(int(xyz[1]) + 1).replace(" ","") + "," + str(xyz[0]) + "," + str(xyz[2]).replace(" ","") + ";")
                 blocks.append(str(block_pick) + "$")
@@ -175,9 +172,9 @@ if col == "Create":
     depth = int(easygui.enterbox(msg="Depth: ", title="Depth"))
     depthm = depth - 2*depth
     gentype = easygui.choicebox(msg="Generation type:", title="Generation type", choices=["Normal", "Flat"])
-    biome = easygui.choicebox(msg="Choose a biome for generation:", title="Biome", choices=["Random", "Forest", "Jungle", "Plains", "Snowy Plains", "Beach"])
+    biome = easygui.choicebox(msg="Choose a biome for generation:", title="Biome", choices=["Random", "Desert", "Forest", "Jungle", "Plains", "Snowy Plains", "Beach"])
     if biome == "Random":
-        o = randint(1,5)
+        o = randint(1,6)
         if o == 1:
             biome = "Forest"
         elif o == 2:
@@ -186,104 +183,27 @@ if col == "Create":
             biome = "Jungle"
         elif o == 4:
             biome = "Beach"
+        elif o == 5:
+            biome = "Desert"
         else:
             biome = "Snowy Plains"
     seedc = easygui.enterbox(msg="Seed(type random for random seed): ", title="Seed")
     if seedc != "random":
         noise = PerlinNoise(octaves=4,seed=int(seedc))
+    else:
+        noise = PerlinNoise(octaves=4,seed=randint(-10000000,10000000))
 
     save = open("save.pymcs", "w")
     
-    save.write(str(width) + " " + str(widthm) + " " + str(depth) + " " + str(depthm) + "," + biome + "!")
+    save.write(str(width) + " " + str(widthm) + " " + str(depth) + " " + str(depthm) + "?" + biome + "," + performance + "," + gentype + "," + str(seedc) + "!")
 
     save.close()
 
-    x = ""
-
-    if performance == "On":
-        x += "1 "
-    else:
-        x += "0 "
-
-    x += str(width) + " "
-    x += str(widthm) + " "
-    x += str(depth) + " "
-    x += str(depthm) + " "
-
-    if gentype == "Normal":
-        x += "0 "
-    else:
-        x += "1 "
-
-    if biome == "Forest":
-        x += "0 "
-    elif biome == "Jungle":
-        x += "1 "
-    elif biome == "Plains":
-        x += "2 "
-    elif biome == "Snowy Plains":
-        x += "3 "
-    elif biome == "Beach":
-        x += "4 "
-    else:
-        x += "5 "
-
-    x += seedc
-
-    print("Your save code:", x)
-
 if col == "Load":
-    lc = easygui.enterbox(msg="Enter load code: ", title="Load")
-
-    spl = lc.split()
-
-    if spl[0] == 1:
-        performance = "On"
-    else:
-        performance = "Off"
-    performance = spl[0]
-
-    width = int(spl[1])
-
-    widthm = int(spl[2])
-
-    depth = int(spl[3])
-
-    depthm = int(spl[4])
-
-    if spl[5] == "0":
-        gentype = "Normal"
-    else:
-        gentype = "Flat"
-
-    if spl[6] == "0":
-        biome = "Forest"
-    elif spl[6] == "1":
-        biome = "Jungle"
-    elif spl[6] == "2":
-        biome = "Plains"
-    elif spl[6] == "3":
-        biome = "Snowy Plains"
-    elif spl[6] == "4":
-        biome = "Beach"
-    else:
-        o = randint(1,5)
-        if o == 1:
-            biome = "Forest"
-        elif o == 2:
-            biome = "Plains"
-        elif o == 3:
-            biome = "Jungle"
-        elif o == 4:
-            biome = "Beach"
-        else:
-            biome = "Snowy Plains"
-
-    seedc = spl[7]
     with open("save.pymcs", "r") as save:
         saveload = save.read().replace("\n", "")
     saveload1 = saveload.split("!")
-    wdb = saveload1[0].split(",")
+    wdb = saveload1[0].split("?")
     wd = wdb[0].split(" ")
 
     width = int(wd[0])
@@ -291,7 +211,13 @@ if col == "Load":
     depth = int(wd[2])
     depthm = int(wd[3])
 
-    biome = wdb[1]
+    bpgs = wdb[1].split(",")
+
+    biome = bpgs[0]
+    performance = bpgs[1]
+    gentype = bpgs[2]
+    seedc = int(bpgs[3])
+    noise = PerlinNoise(octaves=4,seed=int(seedc))
 
     blocksload = saveload1[1].split("$")
 
@@ -322,11 +248,14 @@ if gentype=="Normal":
             s=y
             if biome == "Forest" or biome == "Plains" or biome == "Jungle":
                 voxel = Voxel(position=(x,y,z), texture = grass_texture)
-            elif biome == "Beach":
-                if y > -1:
-                    voxel = Voxel(position=(x,y,z), texture = sand_texture)
+            elif biome == "Beach" or biome == "Desert":
+                if biome == "Beach":
+                    if y > -1:
+                        voxel = Voxel(position=(x,y,z), texture = sand_texture)
                 else:
-                    voxel = Voxel(position=(x,y,z), texture = snowy_grass_texture)
+                    voxel = Voxel(position=(x,y,z), texture = sand_texture)
+            else:
+                voxel = Voxel(position=(x,y,z), texture = snowy_grass_texture)
             if biome == "Forest" or biome == "Jungle":
                 if biome == "Forest":
                     r = randint(0,60)
