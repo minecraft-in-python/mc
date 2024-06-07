@@ -8,3 +8,5 @@ If having performance issues:
   Try lowering width and depth;
   Try using "Flat" instead of "Normal" world generation;
   Turn on performance mode.
+
+If the project doesn't work, try running 'pip install -r ./requirements.txt' in Command Prompt while in 'mc-main' directory.
