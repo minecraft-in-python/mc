@@ -12,6 +12,7 @@ except:
 app = Ursina()
 
 grass_texture = load_texture("./files/Grass_Block.png")
+grass_texture_low = load_texture("./files/Sand_Block.png")
 sand_texture = load_texture("./files/Sand_Block.png")
 stone_texture = load_texture("./files/Stone_Block.png")
 brick_texture = load_texture("./files/Brick_Block.png")
@@ -40,7 +41,7 @@ blocks = []
 
 player = FirstPersonController(gravity=0.8)
 
-noise = PerlinNoise(octaves=4,seed=randint(-10000000,10000000))
+noise = PerlinNoise(octaves=3,seed=randint(-10000000,10000000))
 window.exit_button.visible = False
 block_pick = 1
 randint=random.randint
@@ -51,6 +52,9 @@ health = 2
 playmusic = 1
 
 def update():
+    for entity in scene.entities:
+        if isinstance(entity, Voxel):
+            entity.toggle_visibility(rd)  # Adjust distance threshold as needed
     if player.y < -10:
         player.y = 40
         player.x = 0
@@ -62,21 +66,15 @@ def update():
         hand.active()
     else:
         hand.passive()
-
-    if held_keys["1"]: block_pick = 1
-    if held_keys["2"]: block_pick = 2
-    if held_keys["3"]: block_pick = 3
-    if held_keys["4"]: block_pick = 4
-    if held_keys["5"]: block_pick = 5
-    if held_keys["6"]: block_pick = 6
-    if held_keys["7"]: block_pick = 7
-    if held_keys["8"]: block_pick = 8
-    if held_keys["9"]: block_pick = 9
+        
+    if held_keys["escape"]:
+        quit()
 
 
 col = easygui.choicebox(msg="Create or load?", title="Create or load", choices=["Create", "Load"])
 savename = easygui.enterbox(msg="Save file name: ", title="Save file name")
 fov = int(easygui.enterbox(msg="Field of view/FOV(default is 100): ", title="Field of view/FOV"))
+rd = int(easygui.enterbox(msg="Render distance(16 recommended): ", title="Render distance"))
 fsn = savename + ".pymcs"
 camera.fov = fov
 
@@ -92,13 +90,17 @@ class Voxel(Button):
             highlight_color = color.light_gray,
             scale = 0.5
         )
+    def toggle_visibility(self, rd):
+        distance_to_player = distance(self.position, player.position)
+        if distance_to_player < rd:
+            self.visible = True
+        else:
+            self.visible = False
 
     def input(self,key):
         if self.hovered:
             xyz1 = str(self.position).split("(")
             xyz = (xyz1[1].replace(")","")).split(",")
-            if key == "escape":
-                quit()
             if key == "left shift":
                 if player.speed == 5:
                     player.speed = 8
@@ -107,33 +109,35 @@ class Voxel(Button):
                     player.speed = 5
                     camera.animate("fov", camera.fov-20, delay=0)
             if key == "right mouse down":
-                blocks.append(str(int(xyz[1]) + 1).replace(" ","") + "," + str(xyz[0]) + "," + str(xyz[2]).replace(" ","") + ";")
-                blocks.append(str(block_pick) + "$")
+                distance_to_player = distance(self.position, player.position)
+                if distance_to_player < 4:
+                    blocks.append(str(int(xyz[1]) + 1).replace(" ","") + "," + str(xyz[0]) + "," + str(xyz[2]).replace(" ","") + ";")
+                    blocks.append(str(block_pick) + "$")
 
-                global fsn
-                save = open(fsn, "a")
+                    global fsn
+                    save = open(fsn, "a")
 
-                save.write(str(blocks[len(blocks) - 2]) + str(blocks[len(blocks) - 1]))
+                    save.write(str(blocks[len(blocks) - 2]) + str(blocks[len(blocks) - 1]))
 
-                save.close()
-                
-                if block_pick==1 or block_pick==4: dirt.play()
-                elif block_pick==6: water.play()
-                else: stone.play()
+                    save.close()
+                    
+                    if block_pick==1 or block_pick==4: dirt.play()
+                    elif block_pick==6: water.play()
+                    else: stone.play()
 
-                if block_pick == 1:
-                    if biome == "Snowy Plains":
-                        voxel = Voxel(position = self.position + mouse.normal, texture = snowy_grass_texture)
-                    else:
-                        voxel = Voxel(position = self.position + mouse.normal, texture = grass_texture)
-                if block_pick == 2: voxel = Voxel(position = self.position + mouse.normal, texture = stone_texture)
-                if block_pick == 3: voxel = Voxel(position = self.position + mouse.normal, texture = brick_texture)
-                if block_pick == 4: voxel = Voxel(position = self.position + mouse.normal, texture = dirt_texture)
-                if block_pick == 5: voxel = Voxel(position = self.position + mouse.normal, texture = wood_texture)
-                if block_pick == 6: voxel = Voxel(position = self.position + mouse.normal, texture = water_texture)
-                if block_pick == 7: voxel = Voxel(position = self.position + mouse.normal, texture = leaves_texture)
-                if block_pick == 8: voxel = Voxel(position = self.position + mouse.normal, texture = sand_texture)
-                if block_pick == 9: voxel = Voxel(position = self.position + mouse.normal, texture = bedrock_texture)
+                    if block_pick == 1:
+                        if biome == "Snowy Plains":
+                            voxel = Voxel(position = self.position + mouse.normal, texture = snowy_grass_texture)
+                        else:
+                            voxel = Voxel(position = self.position + mouse.normal, texture = grass_texture)
+                    if block_pick == 2: voxel = Voxel(position = self.position + mouse.normal, texture = stone_texture)
+                    if block_pick == 3: voxel = Voxel(position = self.position + mouse.normal, texture = brick_texture)
+                    if block_pick == 4: voxel = Voxel(position = self.position + mouse.normal, texture = dirt_texture)
+                    if block_pick == 5: voxel = Voxel(position = self.position + mouse.normal, texture = wood_texture)
+                    if block_pick == 6: voxel = Voxel(position = self.position + mouse.normal, texture = water_texture)
+                    if block_pick == 7: voxel = Voxel(position = self.position + mouse.normal, texture = leaves_texture)
+                    if block_pick == 8: voxel = Voxel(position = self.position + mouse.normal, texture = sand_texture)
+                    if block_pick == 9: voxel = Voxel(position = self.position + mouse.normal, texture = bedrock_texture)
 
 
             if key == "left mouse down":
@@ -142,22 +146,6 @@ class Voxel(Button):
                     blocks.remove(str(int(xyz[1]) + 1).replace(" ","") + "," + str(xyz[0]) + "," + str(xyz[2]).replace(" ","") + ";")
                 stone.play()
                 destroy(self)
-
-pmrandint = randint(1,7)
-if pmrandint == 1:
-    dryhands.play()
-elif pmrandint == 2:
-    haggstrom.play()
-elif pmrandint == 2:
-    hauntmuskie.play()
-elif pmrandint == 2:
-    livingmice.play()
-elif pmrandint == 2:
-    miceonvenus.play()
-elif pmrandint == 2:
-    minecraft.play()
-else:
-    subwoofer.play()
 
 class Sky(Entity):
     def __init__(self):
@@ -260,7 +248,21 @@ if col == "Load":
                         if t == 9: loadt = bedrock_texture
                         voxel = Voxel(position=(x,y,z), texture = loadt)
 
-    
+pmrandint = randint(1,7)
+if pmrandint == 1:
+    dryhands.play()
+elif pmrandint == 2:
+    haggstrom.play()
+elif pmrandint == 2:
+    hauntmuskie.play()
+elif pmrandint == 2:
+    livingmice.play()
+elif pmrandint == 2:
+    miceonvenus.play()
+elif pmrandint == 2:
+    minecraft.play()
+else:
+    subwoofer.play()
 
 if gentype=="Normal":
     for z in range(depthm,depth):
