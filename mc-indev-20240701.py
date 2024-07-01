@@ -52,6 +52,8 @@ health = 2
 playmusic = 1
 
 def update():
+    camera.clip_plane_far = 500
+    
     for entity in scene.entities:
         if isinstance(entity, Voxel):
             entity.toggle_visibility(rd)  # Adjust distance threshold as needed
@@ -66,6 +68,16 @@ def update():
         hand.active()
     else:
         hand.passive()
+
+    if held_keys["1"]: block_pick = 1
+    if held_keys["2"]: block_pick = 2
+    if held_keys["3"]: block_pick = 3
+    if held_keys["4"]: block_pick = 4
+    if held_keys["5"]: block_pick = 5
+    if held_keys["6"]: block_pick = 6
+    if held_keys["7"]: block_pick = 7
+    if held_keys["8"]: block_pick = 8
+    if held_keys["9"]: block_pick = 9
         
     if held_keys["escape"]:
         quit()
@@ -77,6 +89,7 @@ fov = int(easygui.enterbox(msg="Field of view/FOV(default is 100): ", title="Fie
 rd = int(easygui.enterbox(msg="Render distance(16 recommended): ", title="Render distance"))
 fsn = savename + ".pymcs"
 camera.fov = fov
+lod_distances = [5,10,20,40]
 
 class Voxel(Button):
     def __init__(self, position = (0, 0, 0), texture = grass_texture):
@@ -90,12 +103,24 @@ class Voxel(Button):
             highlight_color = color.light_gray,
             scale = 0.5
         )
+        self.enable_backface_culling = True
+        self.lod_level = 0  # Start with the highest LOD
+        self.update_lod()
+
     def toggle_visibility(self, rd):
         distance_to_player = distance(self.position, player.position)
         if distance_to_player < rd:
             self.visible = True
         else:
             self.visible = False
+
+    def update_lod(self):
+        distance_to_camera = distance(self.position, camera.world_position)
+        for i, rd in enumerate(lod_distances):
+            if distance_to_camera < rd:
+                self.lod_level = i
+                break
+
 
     def input(self,key):
         if self.hovered:
@@ -138,7 +163,6 @@ class Voxel(Button):
                     if block_pick == 7: voxel = Voxel(position = self.position + mouse.normal, texture = leaves_texture)
                     if block_pick == 8: voxel = Voxel(position = self.position + mouse.normal, texture = sand_texture)
                     if block_pick == 9: voxel = Voxel(position = self.position + mouse.normal, texture = bedrock_texture)
-
 
             if key == "left mouse down":
                 if (str(int(xyz[1]) + 1).replace(" ","") + "," + str(xyz[0]) + "," + str(xyz[2]).replace(" ","") + ";") in blocks:
