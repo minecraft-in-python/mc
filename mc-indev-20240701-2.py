@@ -1,5 +1,6 @@
 from random import randint
 from turtle import position, pu
+import os
 try:
     from ursina import *
     from ursina.prefabs.first_person_controller import FirstPersonController
@@ -84,10 +85,8 @@ def update():
 
 
 col = easygui.choicebox(msg="Create or load?", title="Create or load", choices=["Create", "Load"])
-savename = easygui.enterbox(msg="Save file name: ", title="Save file name")
 fov = int(easygui.enterbox(msg="Field of view/FOV(default is 100): ", title="Field of view/FOV"))
 rd = int(easygui.enterbox(msg="Render distance(16 recommended): ", title="Render distance"))
-fsn = savename + ".pymcs"
 camera.fov = fov
 lod_distances = [5,10,20,40]
 
@@ -201,6 +200,8 @@ class Hand(Entity):
 if col == "Create":
     warning = easygui.msgbox(msg="If having performance issues, read readme.md", title="Tip", ok_button="Okay")
     performance = easygui.choicebox(msg="Performance mode:", title="Performance mode", choices=["On", "Off"])
+    savename = easygui.enterbox(msg="Save file name: ", title="Save file name")
+    fsn = savename + ".pymcs"
     width = int(easygui.enterbox(msg="Width: ", title="Width"))
     widthm = width - 2*width
     depth = int(easygui.enterbox(msg="Depth: ", title="Depth"))
@@ -234,6 +235,14 @@ if col == "Create":
     save.close()
 
 if col == "Load":
+    files = []
+
+    files += [each for each in os.listdir(os.getcwd()) if each.endswith('.pymcs')]
+
+    files = [s.replace('.pymcs', '') for s in files]
+
+    fsn = easygui.choicebox(msg="Save file:", title="Save file", choices=files) + ".pymcs"
+    
     with open(fsn, "r") as save:
         saveload = save.read().replace("\n", "")
     saveload1 = saveload.split("!")
@@ -272,22 +281,6 @@ if col == "Load":
                         if t == 9: loadt = bedrock_texture
                         voxel = Voxel(position=(x,y,z), texture = loadt)
 
-pmrandint = randint(1,7)
-if pmrandint == 1:
-    dryhands.play()
-elif pmrandint == 2:
-    haggstrom.play()
-elif pmrandint == 2:
-    hauntmuskie.play()
-elif pmrandint == 2:
-    livingmice.play()
-elif pmrandint == 2:
-    miceonvenus.play()
-elif pmrandint == 2:
-    minecraft.play()
-else:
-    subwoofer.play()
-
 if gentype=="Normal":
     for z in range(depthm,depth):
         for x in range(widthm,width):
@@ -310,70 +303,85 @@ if gentype=="Normal":
                 else:
                     r = randint(0,30)
                 if r == 0:
+                    if performance == 0:
+                        voxel = Voxel(position = (x, y+1, z), texture = wood_texture)
+                        
+                        voxel = Voxel(position = (x, y+2, z), texture = wood_texture)
+                        
+                        voxel = Voxel(position = (x, y+3, z), texture = wood_texture)
+                        voxel = Voxel(position = (x+1, y+3, z+1), texture = leaves_texture)
+                        voxel = Voxel(position = (x+1, y+3, z), texture = leaves_texture)
+                        voxel = Voxel(position = (x-1, y+3, z), texture = leaves_texture)
+                        voxel = Voxel(position = (x+1, y+3, z-1), texture = leaves_texture)
+                        voxel = Voxel(position = (x-1, y+3, z-1), texture = leaves_texture)
+                        voxel = Voxel(position = (x, y+3, z+1), texture = leaves_texture)
+                        voxel = Voxel(position = (x, y+3, z-1), texture = leaves_texture)
+                        voxel = Voxel(position = (x+1, y+3, z-2), texture = leaves_texture)
+                        voxel = Voxel(position = (x, y+3, z-2), texture = leaves_texture)
+                        voxel = Voxel(position = (x-1, y+3, z-2), texture = leaves_texture)
+                        voxel = Voxel(position = (x+1, y+3, z+2), texture = leaves_texture)
+                        voxel = Voxel(position = (x, y+3, z+2), texture = leaves_texture)
+                        voxel = Voxel(position = (x-1, y+3, z+2), texture = leaves_texture)
+                        voxel = Voxel(position = (x+2, y+3, z-1), texture = leaves_texture)
+                        voxel = Voxel(position = (x+2, y+3, z), texture = leaves_texture)
+                        voxel = Voxel(position = (x+2, y+3, z+1), texture = leaves_texture)
+                        voxel = Voxel(position = (x-2, y+3, z-1), texture = leaves_texture)
+                        voxel = Voxel(position = (x-2, y+3, z), texture = leaves_texture)
+                        voxel = Voxel(position = (x-2, y+3, z+1), texture = leaves_texture)
+                        
+                        voxel = Voxel(position = (x, y+4, z), texture = wood_texture)
+                        voxel = Voxel(position = (x+1, y+4, z+1), texture = leaves_texture)
+                        voxel = Voxel(position = (x-1, y+4, z+1), texture = leaves_texture)
+                        voxel = Voxel(position = (x+1, y+4, z), texture = leaves_texture)
+                        voxel = Voxel(position = (x-1, y+4, z), texture = leaves_texture)
+                        voxel = Voxel(position = (x+1, y+4, z-1), texture = leaves_texture)
+                        voxel = Voxel(position = (x-1, y+4, z-1), texture = leaves_texture)
+                        voxel = Voxel(position = (x, y+4, z+1), texture = leaves_texture)
+                        voxel = Voxel(position = (x, y+4, z-1), texture = leaves_texture)
+                        voxel = Voxel(position = (x+1, y+4, z-2), texture = leaves_texture)
+                        voxel = Voxel(position = (x, y+4, z-2), texture = leaves_texture)
+                        voxel = Voxel(position = (x-1, y+4, z-2), texture = leaves_texture)
+                        voxel = Voxel(position = (x+1, y+4, z+2), texture = leaves_texture)
+                        voxel = Voxel(position = (x, y+4, z+2), texture = leaves_texture)
+                        voxel = Voxel(position = (x-1, y+4, z+2), texture = leaves_texture)
+                        voxel = Voxel(position = (x+2, y+4, z-1), texture = leaves_texture)
+                        voxel = Voxel(position = (x+2, y+4, z), texture = leaves_texture)
+                        voxel = Voxel(position = (x+2, y+4, z+1), texture = leaves_texture)
+                        voxel = Voxel(position = (x-2, y+4, z-1), texture = leaves_texture)
+                        voxel = Voxel(position = (x-2, y+4, z), texture = leaves_texture)
+                        voxel = Voxel(position = (x-2, y+4, z+1), texture = leaves_texture)
+                        
+                        voxel = Voxel(position = (x, y+5, z), texture = wood_texture)
+                        voxel = Voxel(position = (x+1, y+5, z+1), texture = leaves_texture)
+                        voxel = Voxel(position = (x-1, y+5, z+1), texture = leaves_texture)
+                        voxel = Voxel(position = (x+1, y+5, z), texture = leaves_texture)
+                        voxel = Voxel(position = (x-1, y+5, z), texture = leaves_texture)
+                        voxel = Voxel(position = (x+1, y+5, z-1), texture = leaves_texture)
+                        voxel = Voxel(position = (x-1, y+5, z-1), texture = leaves_texture)
+                        voxel = Voxel(position = (x, y+5, z+1), texture = leaves_texture)
+                        voxel = Voxel(position = (x, y+5, z-1), texture = leaves_texture)
+                        
+                        voxel = Voxel(position = (x, y+6, z), texture = leaves_texture)
+                        voxel = Voxel(position = (x, y+6, z-1), texture = leaves_texture)
+                        voxel = Voxel(position = (x, y+6, z+1), texture = leaves_texture)
+                        voxel = Voxel(position = (x-1, y+6, z), texture = leaves_texture)
+                        voxel = Voxel(position = (x+1, y+6, z), texture = leaves_texture)
 
-                    voxel = Voxel(position = (x, y+1, z), texture = wood_texture)
-                    
-                    voxel = Voxel(position = (x, y+2, z), texture = wood_texture)
-                    
-                    voxel = Voxel(position = (x, y+3, z), texture = wood_texture)
-                    voxel = Voxel(position = (x+1, y+3, z+1), texture = leaves_texture)
-                    voxel = Voxel(position = (x+1, y+3, z), texture = leaves_texture)
-                    voxel = Voxel(position = (x-1, y+3, z), texture = leaves_texture)
-                    voxel = Voxel(position = (x+1, y+3, z-1), texture = leaves_texture)
-                    voxel = Voxel(position = (x-1, y+3, z-1), texture = leaves_texture)
-                    voxel = Voxel(position = (x, y+3, z+1), texture = leaves_texture)
-                    voxel = Voxel(position = (x, y+3, z-1), texture = leaves_texture)
-                    voxel = Voxel(position = (x+1, y+3, z-2), texture = leaves_texture)
-                    voxel = Voxel(position = (x, y+3, z-2), texture = leaves_texture)
-                    voxel = Voxel(position = (x-1, y+3, z-2), texture = leaves_texture)
-                    voxel = Voxel(position = (x+1, y+3, z+2), texture = leaves_texture)
-                    voxel = Voxel(position = (x, y+3, z+2), texture = leaves_texture)
-                    voxel = Voxel(position = (x-1, y+3, z+2), texture = leaves_texture)
-                    voxel = Voxel(position = (x+2, y+3, z-1), texture = leaves_texture)
-                    voxel = Voxel(position = (x+2, y+3, z), texture = leaves_texture)
-                    voxel = Voxel(position = (x+2, y+3, z+1), texture = leaves_texture)
-                    voxel = Voxel(position = (x-2, y+3, z-1), texture = leaves_texture)
-                    voxel = Voxel(position = (x-2, y+3, z), texture = leaves_texture)
-                    voxel = Voxel(position = (x-2, y+3, z+1), texture = leaves_texture)
-                    
-                    voxel = Voxel(position = (x, y+4, z), texture = wood_texture)
-                    voxel = Voxel(position = (x+1, y+4, z+1), texture = leaves_texture)
-                    voxel = Voxel(position = (x-1, y+4, z+1), texture = leaves_texture)
-                    voxel = Voxel(position = (x+1, y+4, z), texture = leaves_texture)
-                    voxel = Voxel(position = (x-1, y+4, z), texture = leaves_texture)
-                    voxel = Voxel(position = (x+1, y+4, z-1), texture = leaves_texture)
-                    voxel = Voxel(position = (x-1, y+4, z-1), texture = leaves_texture)
-                    voxel = Voxel(position = (x, y+4, z+1), texture = leaves_texture)
-                    voxel = Voxel(position = (x, y+4, z-1), texture = leaves_texture)
-                    voxel = Voxel(position = (x+1, y+4, z-2), texture = leaves_texture)
-                    voxel = Voxel(position = (x, y+4, z-2), texture = leaves_texture)
-                    voxel = Voxel(position = (x-1, y+4, z-2), texture = leaves_texture)
-                    voxel = Voxel(position = (x+1, y+4, z+2), texture = leaves_texture)
-                    voxel = Voxel(position = (x, y+4, z+2), texture = leaves_texture)
-                    voxel = Voxel(position = (x-1, y+4, z+2), texture = leaves_texture)
-                    voxel = Voxel(position = (x+2, y+4, z-1), texture = leaves_texture)
-                    voxel = Voxel(position = (x+2, y+4, z), texture = leaves_texture)
-                    voxel = Voxel(position = (x+2, y+4, z+1), texture = leaves_texture)
-                    voxel = Voxel(position = (x-2, y+4, z-1), texture = leaves_texture)
-                    voxel = Voxel(position = (x-2, y+4, z), texture = leaves_texture)
-                    voxel = Voxel(position = (x-2, y+4, z+1), texture = leaves_texture)
-                    
-                    voxel = Voxel(position = (x, y+5, z), texture = wood_texture)
-                    voxel = Voxel(position = (x+1, y+5, z+1), texture = leaves_texture)
-                    voxel = Voxel(position = (x-1, y+5, z+1), texture = leaves_texture)
-                    voxel = Voxel(position = (x+1, y+5, z), texture = leaves_texture)
-                    voxel = Voxel(position = (x-1, y+5, z), texture = leaves_texture)
-                    voxel = Voxel(position = (x+1, y+5, z-1), texture = leaves_texture)
-                    voxel = Voxel(position = (x-1, y+5, z-1), texture = leaves_texture)
-                    voxel = Voxel(position = (x, y+5, z+1), texture = leaves_texture)
-                    voxel = Voxel(position = (x, y+5, z-1), texture = leaves_texture)
-                    
-                    voxel = Voxel(position = (x, y+6, z), texture = leaves_texture)
-                    voxel = Voxel(position = (x, y+6, z-1), texture = leaves_texture)
-                    voxel = Voxel(position = (x, y+6, z+1), texture = leaves_texture)
-                    voxel = Voxel(position = (x-1, y+6, z), texture = leaves_texture)
-                    voxel = Voxel(position = (x+1, y+6, z), texture = leaves_texture)
+                    else:
+                        voxel = Voxel(position = (x, y+1, z), texture = wood_texture)
+                        
+                        voxel = Voxel(position = (x, y+2, z), texture = wood_texture)
 
+                        for i in range(3,5):
+                            voxel = Voxel(position = (x, y+i, z), texture = wood_texture)
+                            voxel = Voxel(position = (x+1, y+i, z+1), texture = leaves_texture)
+                            voxel = Voxel(position = (x-1, y+i, z+1), texture = leaves_texture)
+                            voxel = Voxel(position = (x+1, y+i, z), texture = leaves_texture)
+                            voxel = Voxel(position = (x-1, y+i, z), texture = leaves_texture)
+                            voxel = Voxel(position = (x+1, y+i, z-1), texture = leaves_texture)
+                            voxel = Voxel(position = (x-1, y+i, z-1), texture = leaves_texture)
+                            voxel = Voxel(position = (x, y+i, z+1), texture = leaves_texture)
+                            voxel = Voxel(position = (x, y+i, z-1), texture = leaves_texture)
             if biome == "Beach" and y < 0:
                 voxel = Voxel(position=(x,-1,z), texture=water_texture)
                 voxel = Voxel(position=(x,-2,z), texture=water_texture) 
@@ -392,6 +400,22 @@ elif gentype=="Flat":
                 voxel = Voxel(position=(x,1,z), texture = grass_texture)
             else:
                 voxel = Voxel(position=(x,1,z), texture = snowy_grass_texture)
+
+pmrandint = randint(1,7)
+if pmrandint == 1:
+    dryhands.play()
+elif pmrandint == 2:
+    haggstrom.play()
+elif pmrandint == 2:
+    hauntmuskie.play()
+elif pmrandint == 2:
+    livingmice.play()
+elif pmrandint == 2:
+    miceonvenus.play()
+elif pmrandint == 2:
+    minecraft.play()
+else:
+    subwoofer.play()
 
 sky = Sky()
 hand = Hand()
