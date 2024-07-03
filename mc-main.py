@@ -1,6 +1,6 @@
 from random import randint
 from turtle import position, pu
-import os
+import os, sys
 try:
     from ursina import *
     from ursina.prefabs.first_person_controller import FirstPersonController
@@ -8,12 +8,11 @@ try:
     from perlin_noise import PerlinNoise
 except:
     print("None/Not all modules installed! Please install them by running 'pip install -r ./requirements.txt' in Command Prompt while in 'mc-main' directory.")
-    quit()
+    sys.exit()
 
 app = Ursina()
 
 grass_texture = load_texture("./files/Grass_Block.png")
-grass_texture_low = load_texture("./files/Sand_Block.png")
 sand_texture = load_texture("./files/Sand_Block.png")
 stone_texture = load_texture("./files/Stone_Block.png")
 brick_texture = load_texture("./files/Brick_Block.png")
@@ -37,6 +36,10 @@ livingmice = Audio("./files/livingmice.mp3", loop = True, autoplay = False)
 miceonvenus = Audio("./files/miceonvenus.mp3", loop = True, autoplay = False)
 minecraft = Audio("./files/minecraft.mp3", loop = True, autoplay = False)
 subwoofer = Audio("./files/subwoofer.mp3", loop = True, autoplay = False)
+
+sys.path.append('./files')
+
+import tree, sky, hand
 
 blocks = []
 
@@ -170,33 +173,6 @@ class Voxel(Button):
                 stone.play()
                 destroy(self)
 
-class Sky(Entity):
-    def __init__(self):
-        super().__init__(
-            parent = scene,
-            model = "Sphere",
-            texture = sky_texture,
-            scale = 150,
-            double_sided = True
-        )
-
-class Hand(Entity):
-    def __init__(self):
-        super().__init__(
-            parent = camera.ui,
-            model = "Arm",
-            texture = arm_texture,
-            scale = 0.2,
-            rotation = Vec3(170, -10, 0),
-            position = Vec2(0.6, -0.6)
-        )
-
-    def active(self):
-        self.position = Vec2(0.5, -0.5)
-
-    def passive(self):
-        self.position = Vec2(0.6, -0.6)
-
 if col == "Create":
     warning = easygui.msgbox(msg="If having performance issues, read readme.md", title="Tip", ok_button="Okay")
     performance = easygui.choicebox(msg="Performance mode:", title="Performance mode", choices=["On", "Off"])
@@ -240,6 +216,15 @@ if col == "Load":
     files += [each for each in os.listdir(os.getcwd()) if each.endswith('.pymcs')]
 
     files = [s.replace('.pymcs', '') for s in files]
+
+    if len(files) == 0:
+        warning = easygui.msgbox(msg="No save files! The program will exit.", title="Error", ok_button="Okay")
+        sys.exit()
+    else:
+        if len(files) == 1:
+            files += ""
+        else:
+            pass
 
     fsn = easygui.choicebox(msg="Save file:", title="Save file", choices=files) + ".pymcs"
     
@@ -303,85 +288,7 @@ if gentype=="Normal":
                 else:
                     r = randint(0,30)
                 if r == 0:
-                    if performance == 0:
-                        voxel = Voxel(position = (x, y+1, z), texture = wood_texture)
-                        
-                        voxel = Voxel(position = (x, y+2, z), texture = wood_texture)
-                        
-                        voxel = Voxel(position = (x, y+3, z), texture = wood_texture)
-                        voxel = Voxel(position = (x+1, y+3, z+1), texture = leaves_texture)
-                        voxel = Voxel(position = (x+1, y+3, z), texture = leaves_texture)
-                        voxel = Voxel(position = (x-1, y+3, z), texture = leaves_texture)
-                        voxel = Voxel(position = (x+1, y+3, z-1), texture = leaves_texture)
-                        voxel = Voxel(position = (x-1, y+3, z-1), texture = leaves_texture)
-                        voxel = Voxel(position = (x, y+3, z+1), texture = leaves_texture)
-                        voxel = Voxel(position = (x, y+3, z-1), texture = leaves_texture)
-                        voxel = Voxel(position = (x+1, y+3, z-2), texture = leaves_texture)
-                        voxel = Voxel(position = (x, y+3, z-2), texture = leaves_texture)
-                        voxel = Voxel(position = (x-1, y+3, z-2), texture = leaves_texture)
-                        voxel = Voxel(position = (x+1, y+3, z+2), texture = leaves_texture)
-                        voxel = Voxel(position = (x, y+3, z+2), texture = leaves_texture)
-                        voxel = Voxel(position = (x-1, y+3, z+2), texture = leaves_texture)
-                        voxel = Voxel(position = (x+2, y+3, z-1), texture = leaves_texture)
-                        voxel = Voxel(position = (x+2, y+3, z), texture = leaves_texture)
-                        voxel = Voxel(position = (x+2, y+3, z+1), texture = leaves_texture)
-                        voxel = Voxel(position = (x-2, y+3, z-1), texture = leaves_texture)
-                        voxel = Voxel(position = (x-2, y+3, z), texture = leaves_texture)
-                        voxel = Voxel(position = (x-2, y+3, z+1), texture = leaves_texture)
-                        
-                        voxel = Voxel(position = (x, y+4, z), texture = wood_texture)
-                        voxel = Voxel(position = (x+1, y+4, z+1), texture = leaves_texture)
-                        voxel = Voxel(position = (x-1, y+4, z+1), texture = leaves_texture)
-                        voxel = Voxel(position = (x+1, y+4, z), texture = leaves_texture)
-                        voxel = Voxel(position = (x-1, y+4, z), texture = leaves_texture)
-                        voxel = Voxel(position = (x+1, y+4, z-1), texture = leaves_texture)
-                        voxel = Voxel(position = (x-1, y+4, z-1), texture = leaves_texture)
-                        voxel = Voxel(position = (x, y+4, z+1), texture = leaves_texture)
-                        voxel = Voxel(position = (x, y+4, z-1), texture = leaves_texture)
-                        voxel = Voxel(position = (x+1, y+4, z-2), texture = leaves_texture)
-                        voxel = Voxel(position = (x, y+4, z-2), texture = leaves_texture)
-                        voxel = Voxel(position = (x-1, y+4, z-2), texture = leaves_texture)
-                        voxel = Voxel(position = (x+1, y+4, z+2), texture = leaves_texture)
-                        voxel = Voxel(position = (x, y+4, z+2), texture = leaves_texture)
-                        voxel = Voxel(position = (x-1, y+4, z+2), texture = leaves_texture)
-                        voxel = Voxel(position = (x+2, y+4, z-1), texture = leaves_texture)
-                        voxel = Voxel(position = (x+2, y+4, z), texture = leaves_texture)
-                        voxel = Voxel(position = (x+2, y+4, z+1), texture = leaves_texture)
-                        voxel = Voxel(position = (x-2, y+4, z-1), texture = leaves_texture)
-                        voxel = Voxel(position = (x-2, y+4, z), texture = leaves_texture)
-                        voxel = Voxel(position = (x-2, y+4, z+1), texture = leaves_texture)
-                        
-                        voxel = Voxel(position = (x, y+5, z), texture = wood_texture)
-                        voxel = Voxel(position = (x+1, y+5, z+1), texture = leaves_texture)
-                        voxel = Voxel(position = (x-1, y+5, z+1), texture = leaves_texture)
-                        voxel = Voxel(position = (x+1, y+5, z), texture = leaves_texture)
-                        voxel = Voxel(position = (x-1, y+5, z), texture = leaves_texture)
-                        voxel = Voxel(position = (x+1, y+5, z-1), texture = leaves_texture)
-                        voxel = Voxel(position = (x-1, y+5, z-1), texture = leaves_texture)
-                        voxel = Voxel(position = (x, y+5, z+1), texture = leaves_texture)
-                        voxel = Voxel(position = (x, y+5, z-1), texture = leaves_texture)
-                        
-                        voxel = Voxel(position = (x, y+6, z), texture = leaves_texture)
-                        voxel = Voxel(position = (x, y+6, z-1), texture = leaves_texture)
-                        voxel = Voxel(position = (x, y+6, z+1), texture = leaves_texture)
-                        voxel = Voxel(position = (x-1, y+6, z), texture = leaves_texture)
-                        voxel = Voxel(position = (x+1, y+6, z), texture = leaves_texture)
-
-                    else:
-                        voxel = Voxel(position = (x, y+1, z), texture = wood_texture)
-                        
-                        voxel = Voxel(position = (x, y+2, z), texture = wood_texture)
-
-                        for i in range(3,5):
-                            voxel = Voxel(position = (x, y+i, z), texture = wood_texture)
-                            voxel = Voxel(position = (x+1, y+i, z+1), texture = leaves_texture)
-                            voxel = Voxel(position = (x-1, y+i, z+1), texture = leaves_texture)
-                            voxel = Voxel(position = (x+1, y+i, z), texture = leaves_texture)
-                            voxel = Voxel(position = (x-1, y+i, z), texture = leaves_texture)
-                            voxel = Voxel(position = (x+1, y+i, z-1), texture = leaves_texture)
-                            voxel = Voxel(position = (x-1, y+i, z-1), texture = leaves_texture)
-                            voxel = Voxel(position = (x, y+i, z+1), texture = leaves_texture)
-                            voxel = Voxel(position = (x, y+i, z-1), texture = leaves_texture)
+                    tree.tree(x,y,z,performance)
             if biome == "Beach" and y < 0:
                 voxel = Voxel(position=(x,-1,z), texture=water_texture)
                 voxel = Voxel(position=(x,-2,z), texture=water_texture) 
@@ -417,7 +324,7 @@ elif pmrandint == 2:
 else:
     subwoofer.play()
 
-sky = Sky()
-hand = Hand()
+sky = sky.Sky()
+hand = hand.Hand()
 
 app.run()
